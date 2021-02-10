@@ -62,6 +62,11 @@ jobs:
     - name: Restore NuGets
       run: nuget restore SpeckleRevit.sln
 
+    - name: Update AssemblyInfo
+      run: |
+        $tag = "${{ needs.createRelease.outputs.version }}.$($env:GITHUB_RUN_ID%65536)"
+        (Get-content .\SpeckleRevitReboot\Properties\AssemblyInfo.cs) -replace '1\.0\.0\.0', $tag | Out-File -encoding ASCII .\AssemblyInfo.cs
+
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1.0.2
 
