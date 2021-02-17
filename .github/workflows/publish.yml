@@ -74,7 +74,7 @@ jobs:
       run: msbuild SpeckleRevit.sln /p:platform="x64" /p:configuration="${{ matrix.configuration }}" /p:VisualStudioVersion="16.0" /restore
         
     - name: zip
-      run: 7z a Speckle${{ matrix.configuration }}.zip -r Release\${{ matrix.configuration }}\*
+      run: 7z a Speckle${{ matrix.configuration }}.zip -r .\Release\${{ matrix.configuration }}\*
         
         
     - name: Upload Windows executable
