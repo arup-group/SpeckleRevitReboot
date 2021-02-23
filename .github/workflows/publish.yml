@@ -1,0 +1,90 @@
+name: Publish
+
+on: push
+
+jobs:
+  createRelease:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create-release.outputs.upload_url }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 0
+  
+      - uses: PaulHatch/semantic-version@v4
+        id: version
+        with:
+          tag_prefix: ''
+          
+      - name: Create Release
+        if: github.ref == 'refs/heads/master' 
+        id: create-release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: SpeckleRevit-${{ steps.version.outputs.version }} Community Edition
+          body: |
+            Community edition of Speckle Revit
+          draft: false
+          prerelease: false
+    
+  build:
+    needs: [createRelease]
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: 
+          - 'Release2019'
+          - 'Release2020'
+          - 'Release2021'
+        include:
+          - configuration: 'Release2019'
+            year: 2019
+          - configuration: 'Release2020'
+            year: 2020
+          - configuration: 'Release2021'
+            year: 2021
+
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+        
+    - uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: '5.x'
+      
+    - name: Restore NuGets
+      run: nuget restore SpeckleRevit.sln
+
+    - name: Update AssemblyInfo
+      run: |
+        $tag = "${{ needs.createRelease.outputs.version }}.$($env:GITHUB_RUN_ID%65536)"
+        (Get-content .\SpeckleRevitReboot\Properties\AssemblyInfo.cs) -replace '1\.0\.0\.0', $tag | Out-File -encoding ASCII .\SpeckleRevitReboot\Properties\AssemblyInfo.cs
+
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: build
+      run: msbuild SpeckleRevit.sln /p:platform="x64" /p:configuration="${{ matrix.configuration }}" /p:VisualStudioVersion="16.0" /restore
+        
+    - name: zip
+      run: 7z a Speckle${{ matrix.configuration }}.zip -r .\Release\${{ matrix.configuration }}\*
+        
+        
+    - name: Upload Windows executable
+      if: github.ref == 'refs/heads/master' 
+      id: upload-windows-binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.createRelease.outputs.upload_url }}  
+        asset_path: ./Speckle${{ matrix.configuration }}.zip
+        asset_name: SpeckleRevit${{ matrix.year }}-${{ needs.createRelease.outputs.version }}.zip
+        asset_content_type: application/vnd.microsoft.portable-executable
