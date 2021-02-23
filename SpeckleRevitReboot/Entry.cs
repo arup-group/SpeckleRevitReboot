@@ -85,10 +85,36 @@ namespace SpeckleRevit
 
         // Initialise the window
 #if DEBUG
-        SpeckleWindow = new SpeckleUiWindow( bindings, @"http://localhost:8080/" );
+        SpeckleWindow = new SpeckleUiWindow( bindings, @"http://localhost:8080/#/" );
         //SpeckleWindow = new SpeckleUiWindow( bindings, @"https://matteo-dev.appui.speckle.systems/#/" );
+
+        //var path = Directory.GetParent(Assembly.GetExecutingAssembly().Location);
+        //Debug.WriteLine(path, "SPK");
+
+        //var indexPath = string.Format(@"{0}\app\index.html", path);
+        //Debug.WriteLine(indexPath);
+
+        //if (!File.Exists(indexPath))
+        //    Debug.WriteLine("Speckle for Revit: Error. The html file doesn't exists : {0}", "SPK");
+
+        //indexPath = indexPath.Replace("\\", "/");
+
+        //SpeckleWindow = new SpeckleUiWindow(bindings, indexPath);
 #else
-        SpeckleWindow = new SpeckleUiWindow( bindings, @"https://appui.speckle.systems/#/" ); // On release, default to the latest ci-ed version from https://appui.speckle.systems
+        //SpeckleWindow = new SpeckleUiWindow( bindings, @"https://appui.speckle.systems/#/" ); // On release, default to the latest ci-ed version from https://appui.speckle.systems
+
+        var path = Directory.GetParent(Assembly.GetExecutingAssembly().Location);
+        Debug.WriteLine(path, "SPK");
+
+        var indexPath = string.Format(@"{0}\app\index.html", path);
+        Debug.WriteLine(indexPath);
+
+        if (!File.Exists(indexPath))
+            Debug.WriteLine("Speckle for Revit: Error. The html file doesn't exists : {0}", "SPK");
+
+        indexPath = indexPath.Replace("\\", "/");
+
+        SpeckleWindow = new SpeckleUiWindow(bindings, indexPath);
 #endif
 
         SpeckleWindow.Height = 1000;
