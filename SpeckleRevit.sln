@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleUiBase", "SpeckleUi\SpeckleUiBase\SpeckleUiBase.csproj", "{CE40C576-3B05-443A-A1BA-CB3A796D0084}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "SpeckleUiApp", "SpeckleUiApp\SpeckleUiApp.njsproj", "{4A0CD0E8-9AE2-43B3-BFDD-F6605CD31EE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
