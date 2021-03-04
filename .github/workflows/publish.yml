@@ -55,11 +55,6 @@ jobs:
       with:
         submodules: true
 
-    - name: Setup Node.js environment
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-      uses: actions/setup-node@v1.4.3
-
     - name: build SpeckleUiApp
       run: cd SpeckleUiApp; npm install; npm run build      
         
