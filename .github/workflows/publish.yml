@@ -55,8 +55,13 @@ jobs:
       with:
         submodules: true
 
-    - name: build SpeckleUiApp
-      run: cd SpeckleUiApp; npm install; npm run build      
+    - name: Install third party dependencies
+      working-directory: SpeckleUiApp
+      run: npm ci 
+      
+    - name: build Speckle UI App
+      working-directory: SpeckleUiApp
+      run: npm run build 
         
     - uses: nuget/setup-nuget@v1
       with:
