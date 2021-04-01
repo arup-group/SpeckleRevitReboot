@@ -54,6 +54,14 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
+
+    - name: Install third party dependencies
+      working-directory: SpeckleUiApp
+      run: npm ci 
+      
+    - name: build Speckle UI App
+      working-directory: SpeckleUiApp
+      run: npm run build 
         
     - uses: nuget/setup-nuget@v1
       with:
