@@ -97,6 +97,8 @@ namespace SpeckleRevit.UI
       objects = GetSelectionFilterObjects(filter, client._id.ToString(), client.streamId.ToString());
 
       var apiClient = new SpeckleApiClient((string)client.account.RestApi) { AuthToken = (string)client.account.Token };
+      var task = Task.Run(async () => { await apiClient.IntializeUser(); });
+      task.Wait();
 
       var convertedObjects = new List<SpeckleObject>();
       var placeholders = new List<SpeckleObject>();
@@ -219,6 +221,7 @@ namespace SpeckleRevit.UI
         loadingBlurb = "Updating stream."
       }));
 
+      apiClient.Stream = myStream;
       var response = apiClient.StreamUpdateAsync((string)client.streamId, myStream).Result;
 
       var plural = objects.Count() == 1 ? "" : "s";

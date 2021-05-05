@@ -26,6 +26,8 @@ namespace SpeckleRevit.UI
     {
       var client = JsonConvert.DeserializeObject<dynamic>(args);
       var apiClient = new SpeckleApiClient((string)client.account.RestApi) { AuthToken = (string)client.account.Token };
+      var task = Task.Run(async () => { await apiClient.IntializeUser(); });
+      task.Wait();
       apiClient.ClientType = "Revit";
 
       //dispatch on the cef window to let progress bar update
@@ -63,6 +65,7 @@ namespace SpeckleRevit.UI
       LocalContext.GetCachedObjects(stream.Objects, (string)client.account.RestApi);
       var payload = stream.Objects.Where(o => o.Type == "Placeholder").Select(obj => obj._id).ToArray();
 
+      apiClient.Stream = stream;
       // TODO: Orchestrate & save in cache afterwards!
       var objects = apiClient.ObjectGetBulkAsync(payload, "").Result.Resources;
 
