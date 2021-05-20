@@ -99,6 +99,7 @@ namespace SpeckleRevit.UI
       var apiClient = new SpeckleApiClient((string)client.account.RestApi) { AuthToken = (string)client.account.Token };
       var task = Task.Run(async () => { await apiClient.IntializeUser(); });
       task.Wait();
+      apiClient.ClientType = "Revit";
 
       var convertedObjects = new List<SpeckleObject>();
       var placeholders = new List<SpeckleObject>();
